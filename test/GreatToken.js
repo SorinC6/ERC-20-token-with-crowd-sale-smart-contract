@@ -3,7 +3,22 @@ var GreatToken = artifacts.require("./GreatToken.sol")
 contract("GreatToken" ,(accounts)=> {
     let tokenInstance;
 
-    it('sets the total supply upon deployment', async () => {
+    it('initialize contract with the corect values',()=>{
+        return GreatToken.deployed().then((instance)=>{
+            tokenInstance=instance
+            return tokenInstance.name()
+        }).then((name)=>{
+            assert.equal(name ,'Great Token', 'has the correct name')
+            return tokenInstance.symbol()
+        }).then((symbol)=>{
+            assert.equal(symbol ,'GRT', 'has the correct symbol')
+            return tokenInstance.standard()
+        }).then((standard)=>{
+            assert.equal(standard,'Great Token V1.0','has the correct standard')
+        })
+    })
+
+    it('alocates inital supply upon deployment', async () => {
         return GreatToken.deployed().then((instance)=>{
             tokenInstance = instance
             return tokenInstance.totalSupply()
