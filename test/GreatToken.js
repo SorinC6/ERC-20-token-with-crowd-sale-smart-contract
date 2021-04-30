@@ -74,4 +74,46 @@ contract("GreatToken" ,(accounts)=> {
             assert.equal(allowance.toNumber(), 100 , 'stores the allowance for delegated transfer')
         })
     })
+
+    it('handles delegate tokens transfer',()=>{
+        return GreatToken.deployed().then((instance)=>{
+            tokenInstance=instance
+            fromAccount = accounts[2];
+            toAccount = accounts[3];
+            spendingAccount = accounts[4];
+            //transfer  some tokens to fromAccount
+            return tokenInstance.transfer(fromAccount, 100, {from: accounts[0]});
+        }).then((receipt)=>{
+            // approve spending accunt to spend 10 tokens from fromAccounts
+            return tokenInstance.approve(spendingAccount , 10 ,{ from : fromAccount })
+        }).then((receipt)=>{
+            // try trasfering something larger then sender balance
+            return tokenInstance.transferFrom(fromAccount, toAccount, 1000, { from: spendingAccount })
+        }).then(assert.fail).catch((error)=>{
+            assert(error.message.indexOf('revert') >= 0, 'cannot transfer value larger then balance');
+            // try transfering something larger that the approved amount
+            return tokenInstance.transferFrom(fromAccount, toAccount, 20, {from: spendingAccount})
+        }).then(assert.fail).catch((error)=>{
+            assert(error.message.indexOf('revert') >=0 , 'cannot transfer value larger than approved amount')
+            return tokenInstance.transferFrom.call(fromAccount, toAccount, 10, { from: spendingAccount })
+        }).then((success)=>{
+            assert.equal(success,true)
+            return tokenInstance.transferFrom(fromAccount, toAccount, 10, { from: spendingAccount })
+        }).then((receipt)=>{
+            assert.equal(receipt.logs.length,1, 'trigger the event');
+            assert.equal(receipt.logs[0].event,'Transfer', 'first one should be the Transfer event');
+            assert.equal(receipt.logs[0].args._from, fromAccount, 'logs the account the token are transfered from')
+            assert.equal(receipt.logs[0].args._to, toAccount, 'logs the account the token are transfered to')
+            assert.equal(receipt.logs[0].args._value, 10, 'logs the transfer amount')
+            return tokenInstance.balanceOf(fromAccount)
+        }).then((balance)=>{
+            assert.equal(balance.toNumber(), 90 , 'deduct the amount from sending account');
+            return tokenInstance.balanceOf(toAccount)
+        }).then((balance)=>{
+            assert.equal(balance.toNumber(), 10 , 'deduct the amount from sending account');
+            return tokenInstance.allowance(fromAccount, spendingAccount);
+        }).then((allowance)=>{
+            assert.equal(allowance.toNumber(), 0 ,'deduct the amount from the allowance')
+        })
+    })
 })
