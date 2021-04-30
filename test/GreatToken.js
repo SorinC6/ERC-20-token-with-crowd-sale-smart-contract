@@ -55,4 +55,23 @@ contract("GreatToken" ,(accounts)=> {
             assert.equal(balance.toNumber(), 9975000 , 'substract the amount from sending account')
         })
     })
+
+    it('approves tokens for delegated transfer', ()=>{
+        return GreatToken.deployed().then((instance)=>{
+            tokenInstance=instance
+            return tokenInstance.approve.call(accounts[1],100);
+        }).then((success)=>{
+            assert.equal(success,true,'return true when approving')
+            return tokenInstance.approve(accounts[1],100, { from : accounts[0] });
+        }).then((receipt)=>{
+            assert.equal(receipt.logs.length,1, 'trigger the event');
+            assert.equal(receipt.logs[0].event,'Approval', 'first one should be the Approval event');
+            assert.equal(receipt.logs[0].args._owner, accounts[0], 'logs the account that tokens are authorized by')
+            assert.equal(receipt.logs[0].args._spender, accounts[1], 'logs the account the tokens are authotrized to')
+            assert.equal(receipt.logs[0].args._value, 100, 'logs the transfer amount')         
+            return tokenInstance.allowance(accounts[0],accounts[1]);   
+        }).then((allowance)=>{
+            assert.equal(allowance.toNumber(), 100 , 'stores the allowance for delegated transfer')
+        })
+    })
 })
