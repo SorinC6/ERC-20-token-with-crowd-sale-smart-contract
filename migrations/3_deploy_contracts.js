@@ -3,6 +3,8 @@ var GreatTokenSale = artifacts.require("./GreatTokenSale.sol")
 
 module.exports = function(deployer) {
   deployer.deploy(GreatToken, 10000000).then(()=>{
-    return deployer.deploy(GreatTokenSale, GreatToken.address);
+    // Token price is 0.001 Ether
+    var tokenPrice = 1000000000000000; // wei
+    return deployer.deploy(GreatTokenSale, GreatToken.address, tokenPrice);
   });
 };

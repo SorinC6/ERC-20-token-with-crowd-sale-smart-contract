@@ -6,11 +6,11 @@ import './GreatToken.sol';
 contract GreatTokenSale {
     address admin;
     GreatToken public tokenContract;
+    uint256 public tokenPrice;
 
-    constructor(GreatToken _tokenContract) public {
+    constructor(GreatToken _tokenContract, uint256 _tokenPrice) public {
         admin = msg.sender;
         tokenContract = _tokenContract;
-        // Token Contract
-        // Token Price
+        tokenPrice = _tokenPrice;
     }
 }

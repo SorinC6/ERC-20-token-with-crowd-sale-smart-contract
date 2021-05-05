@@ -1,9 +1,10 @@
 var GreatTokenSale = artifacts.require("./GreatTokenSale.sol")
 
-contract("GreatTokenSale",()=>{
+contract("GreatTokenSale",(accounts)=>{
     let tokenSaleInstance;
+    var tokenPrice = 1000000000000000; // wei
 
-    if("initializes the contract with the correct values",()=>{
+    it("initializes the contract with the correct values",()=>{
         return GreatTokenSale.deployed().then((instance)=>{
             tokenSaleInstance = instance
             return tokenSaleInstance.address
@@ -12,7 +13,9 @@ contract("GreatTokenSale",()=>{
             return tokenSaleInstance.tokenContract();
         }).then((address)=>{
             assert.notEqual(address, 0x0, 'has token contract address')
-
+            return tokenSaleInstance.tokenPrice();
+        }).then((price)=>{
+            assert.equal(price, tokenPrice, 'token price is correct')
         })
     });
 })
