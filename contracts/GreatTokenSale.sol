@@ -25,5 +25,6 @@ contract GreatTokenSale {
         tokenSold += _numberOfTokens;
 
         // Emit Sell Event
+        
     }
 }

@@ -28,6 +28,12 @@ contract("GreatTokenSale",(accounts)=>{
             let value = numberOfTokens * tokenPrice
             return tokenSaleInstance.buyTokens(numberOfTokens, {from: buyer, value: value})
         }).then((receipt)=>{
+            assert.equal(receipt.logs.length,1, 'trigger the event');
+            assert.equal(receipt.logs[0].event,'Transfer', 'first one should be the Transfer event');
+            assert.equal(receipt.logs[0].args._from, accounts[0], 'logs the account the token are transfered from')
+            assert.equal(receipt.logs[0].args._to, accounts[1], 'logs the account the token are transfered to')
+            assert.equal(receipt.logs[0].args._value, 25000, 'logs the transfer amount')
+            
             return tokenSaleInstance.tokenSold();
         }).then((amount)=>{
             assert.equal(amount.toNumber(), numberOfTokens, ' increments the number of tokens sold')
