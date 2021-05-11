@@ -1,16 +1,28 @@
 import React, { Component } from 'react';
-import SimpleStorage from './contracts/SimpleStorage.json';
+// import SimpleStorage from './contracts/SimpleStorage.json';
+import GreatToken from './contracts/GreatToken.json';
+import GreatTokenSale from './contracts/GreatTokenSale.json';
 import getWeb3 from './getWeb3';
+import Web3 from 'web3';
 
 import Header from './components/Header';
 import FormSection from './components/FormSection';
 import ProgressBar from './components/ProgressBar';
 import WarningSection from './components/WarningSection';
-
-// import "./App.css";
+import { Typography } from '@material-ui/core';
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  state = {
+    web3: null,
+    account: '0X0',
+    contract: null,
+    tokenContract: null,
+    tokenSaleContract: null,
+    tokenPriceInEth: 0,
+    tokenPriceInWei: 0,
+    tokensSold: 0,
+    tokensAvailable: 800000,
+  };
 
   componentDidMount = async () => {
     try {
@@ -19,20 +31,29 @@ class App extends Component {
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
-      console.log('accounts', accounts);
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
-      console.log('networkId', networkId);
-      const deployedNetwork = SimpleStorage.networks[networkId];
-      console.log('deployedNetwork', deployedNetwork);
-      const instance = new web3.eth.Contract(
-        SimpleStorage.abi,
+
+      const deployedNetwork = GreatToken.networks[networkId];
+      const deployedNetworkSale = GreatTokenSale.networks[networkId];
+      console.log('deployedNetworkSale', deployedNetworkSale);
+
+      // get Instance of GreatToken contract
+      const tokenContract = new web3.eth.Contract(
+        GreatToken.abi,
         deployedNetwork && deployedNetwork.address,
       );
+      // get Instance of GreatTokenSale contract
+      const tokenSaleContract = new web3.eth.Contract(
+        GreatTokenSale.abi,
+        deployedNetworkSale && deployedNetworkSale.address,
+      );
+      console.log('tokenSaleContract', tokenSaleContract);
 
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
+      const account = await web3.eth.getCoinbase();
+
+      // Set web3, accounts, and contract to the state
+      this.setState({ web3, accounts, tokenContract, tokenSaleContract, account }, this.initData);
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(`Failed to load web3, accounts, or contract. Check console for details.`);
@@ -40,39 +61,52 @@ class App extends Component {
     }
   };
 
-  runExample = async () => {
-    const { accounts, contract } = this.state;
+  getToeknInformation = async () => {
+    const { tokenSaleContract, tokenContract, account } = this.state;
+    const price = await tokenSaleContract.methods.tokenPrice().call();
+    const tokensSold = await tokenSaleContract.methods.tokenSold().call();
+    const balance = await tokenContract.methods.balanceOf(account).call();
+    console.log('balance', balance);
 
-    // Stores a given value, 5 by default.
-    await contract.methods.set(2).send({ from: accounts[0] });
+    this.setState({
+      tokenPriceInWei: price,
+      tokenPriceInEth: Web3.utils.fromWei(price),
+      tokensSold,
+      balance,
+    });
+  };
 
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
+  buyTokens = async (tokensNumber) => {
+    const { tokenSaleContract, account, tokenPriceInWei } = this.state;
+    // return await tokenSaleContract.methods.buyTokens(tokensNumber).send({
+    //   from: account,
+    //   value: tokensNumber * tokenPriceInWei,
+    //   gas: 50000,
+    // });
+  };
 
-    // Update state with the result.
-    this.setState({ storageValue: response });
+  initData = async () => {
+    this.getToeknInformation();
+
+    // const { accounts, tokenContract, tokenSaleContract } = this.state;
+
+    // const address = await tokenContract.methods.name().call();
+    // const tokenPrice = await tokenSaleContract.methods.tokenPrice().call();
   };
 
   render() {
-    if (!this.state.web3) {
+    const { account, web3, tokenPriceInEth, tokensSold, tokensAvailable, balance } = this.state;
+
+    if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
-      <div className="App">
-        <Header />
-        <FormSection />
-        <ProgressBar />
+      <div>
+        <Header tokenPrice={tokenPriceInEth} balance={balance} />
+        <FormSection buyTokens={this.buyTokens} />
+        <ProgressBar tokensSold={tokensSold} tokensAvailable={tokensAvailable} />
         <WarningSection />
-        {/* <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2> */}
-        {/* <p>
-          If your contracts compiled and migrated successfully, below will show a stored value of 5
-          (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div> */}
+        <Typography align="center">Your Address: {account}</Typography>
       </div>
     );
   }

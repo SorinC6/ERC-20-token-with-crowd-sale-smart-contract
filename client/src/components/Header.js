@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Box } from '@material-ui/core';
 import { styled, withTheme } from '@material-ui/core/styles';
 
@@ -17,7 +17,7 @@ const HeaderWrapper = styled(withTheme(Box))({
   },
 });
 
-const Header = () => {
+const Header = ({ tokenPrice, balance }) => {
   return (
     <HeaderWrapper>
       <StyledTitle variant="h4">GREAT TOKEN ICO SALE 🚀🚀🚀</StyledTitle>
@@ -25,7 +25,7 @@ const Header = () => {
         Buy some GREATNESS now! 🎖
       </Typography>
       <Typography variant="subtitle1" align="center">
-        Introducing "GREAT TOKEN" (GRT) Token price is 0.001 Ether. You currently have 0 GRT
+        {`Introducing "GREAT TOKEN" (GRT) Token price is ${tokenPrice} Ether. You currently have ${balance} GRT`}
       </Typography>
     </HeaderWrapper>
   );

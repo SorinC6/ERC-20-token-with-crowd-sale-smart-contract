@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextField, Button, InputAdornment } from '@material-ui/core';
 import { withTheme } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 const StyledForm = styled.form`
   display: flex;
@@ -12,29 +12,32 @@ const StyledForm = styled.form`
   margin: 0 auto;
 `;
 
-const FormSection = () => {
+const FormSection = ({ buyTokens }) => {
+  const [value, setValue] = useState();
+  const handleTokenSubmit = (e) => {
+    e.preventDefault();
+    console.log(e);
+    // more data validation TODO
+    const test = buyTokens(value);
+    console.log('TEST', test);
+  };
   return (
-    <StyledForm>
+    <StyledForm onSubmit={handleTokenSubmit}>
       <TextField
-        // className={classes.search}
         fullWidth
         id="input-with-icon-textfield"
         variant="outlined"
         align="center"
-        placeholder=""
-        // onChange={(event) => setQueryText(event.target.value)}
-        // value={queryText}
+        type="number"
+        placeholder="number of tokens"
+        onChange={(event) => setValue(event.target.value)}
+        value={value}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <Button
-              //   className={classes.searchBtn} onClick={onSearch}
-              >
-                Buy Tokens
-              </Button>
+              <Button type="submit">Buy Tokens</Button>
             </InputAdornment>
           ),
-          //   className: classes.input,
         }}
       />
     </StyledForm>

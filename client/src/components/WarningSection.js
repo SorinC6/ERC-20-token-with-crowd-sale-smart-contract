@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     maxWidth: '700px',
     margin: '0 auto',
-    paddingTop: '30px',
+    padding: '30px 0',
   },
 }));
 

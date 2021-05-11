@@ -27,7 +27,7 @@ function LinearProgressWithLabel(props) {
       </Box>
       <Box>
         <Typography variant="body2" color="textSecondary">
-          1222/1700 tokens sold
+          {`${props.tokensSold} / ${props.tokensAvailable} tokens sold`}
         </Typography>
       </Box>
     </Box>
@@ -49,22 +49,19 @@ const useStyles = makeStyles({
   },
 });
 
-export default function LinearWithValueLabel() {
+export default function LinearWithValueLabel({ tokensSold, tokensAvailable }) {
   const classes = useStyles();
   const [progress, setProgress] = React.useState(80);
+  console.log('!!!tokenSold', tokensSold);
 
-  //   React.useEffect(() => {
-  //     const timer = setInterval(() => {
-  //       setProgress((prevProgress) => (prevProgress >= 100 ? 10 : prevProgress + 10));
-  //     }, 800);
-  //     return () => {
-  //       clearInterval(timer);
-  //     };
-  //   }, []);
-
+  const progressProcent = (tokensSold / tokensAvailable) * 100;
   return (
     <div className={classes.root}>
-      <LinearProgressWithLabel value={progress} />
+      <LinearProgressWithLabel
+        value={progressProcent}
+        tokensSold={tokensSold}
+        tokensAvailable={tokensAvailable}
+      />
     </div>
   );
 }
