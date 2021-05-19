@@ -44,6 +44,10 @@ contract("GreatTokenSale", (accounts) => {
             return tokenSaleInstance.tokenSold();
         }).then((amount) => {
             assert.equal(amount.toNumber(), numberOfTokens, ' increments the number of tokens sold')
+            return tokenInstance.balanceOf(buyer)
+        }).then((balance) => {
+            assert.equal(balance.toNumber(), numberOfTokens, 'check the balance of tokenInstance')
+
             return tokenInstance.balanceOf(tokenSaleInstance.address)
             // try to buy tokens different from ether value
         }).then((balance) => {
@@ -55,5 +59,54 @@ contract("GreatTokenSale", (accounts) => {
         }).then(assert.fail).catch((error) => {
             assert(error.message.indexOf('revert') >= 0, 'cannot purchase more tokens than is available')
         })
+    })
+
+
+    // it('ends token sale', function () {
+    //     return GreatToken.deployed().then(function (instance) {
+    //         // Grab token instance first
+    //         tokenInstance = instance;
+    //         return GreatTokenSale.deployed();
+    //     }).then(function (instance) {
+    //         // Then grab token sale instance
+    //         tokenSaleInstance = instance;
+    //         // Try to end sale from account other than the admin
+    //         return tokenSaleInstance.endSale({ from: buyer });
+    //     }).then(assert.fail).catch(function (error) {
+    //         assert(error.message.indexOf('revert' >= 0, 'must be admin to end sale'));
+    //         // End sale as admin
+    //         return tokenSaleInstance.endSale({ from: admin });
+    //     }).then(function (receipt) {
+    //         return tokenInstance.balanceOf(admin);
+    //     }).then(function (balance) {
+    //         assert.equal(balance.toNumber(), 9999990, 'returns all unsold dapp tokens to admin');
+    //         // Check that token price was reset when selfDestruct was called
+    //         return tokenSaleInstance.tokenPrice();
+    //         // }).then(function (price) {
+    //         //     assert.equal(price.toNumber(), 0, 'token price was reset');
+    //         // });
+    //     });
+
+
+    it('ends token sale', async () => {
+        const tokenInstance = await GreatToken.deployed()
+        const tokenSaleInstance = await GreatTokenSale.deployed()
+
+        //try to end sale from the account
+        try {
+            await tokenSaleInstance.endSale({ from: buyer })
+        } catch (error) {
+            assert(error.message.indexOf('revert') >= 0, 'must be an admin who is ending the sale')
+        }
+        //try to end sale from the admin
+        await tokenSaleInstance.endSale({ from: admin })
+
+        const tokenInstanceBalance = await tokenInstance.balanceOf(admin)
+        assert.equal(tokenInstanceBalance.toNumber(), 9999990, 'returns all unsold great token to admin')
+        // return tokenSaleInstance.tokenPrice().then((price) => {
+        //     assert.equal(price.toNumber(), 0, 'token price was reset');
+
+        // })
+
     })
 })

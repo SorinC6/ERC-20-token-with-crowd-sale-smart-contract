@@ -11,7 +11,7 @@ contract GreatTokenSale {
 
     event Sell(address _buyer, uint256 _amount);
 
-    constructor(GreatToken _tokenContract, uint256 _tokenPrice) public {
+    constructor(GreatToken _tokenContract, uint256 _tokenPrice) public payable {
         admin = msg.sender;
         tokenContract = _tokenContract;
         tokenPrice = _tokenPrice;
@@ -28,13 +28,27 @@ contract GreatTokenSale {
         require(msg.value == multiply(_numberOfTokens, tokenPrice));
         // require that the contract has enough tokens
         require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
-        
-        // require that a transfer in succesful
 
+        // require that a transfer in succesful
+        require(tokenContract.transfer(msg.sender, _numberOfTokens));
         // keep track  of numer of token sold
         tokenSold += _numberOfTokens;
 
         // Emit Sell Event
         emit Sell(msg.sender, _numberOfTokens);
+    }
+
+    // ending the token sale
+    function endSale() public {
+        // require that only the admin can end the sale
+        require(msg.sender == admin);
+        require(
+            tokenContract.transfer(
+                admin,
+                tokenContract.balanceOf(address(this))
+            )
+        );
+        // destrory contract
+        // selfdestruct(nftAddress);
     }
 }
