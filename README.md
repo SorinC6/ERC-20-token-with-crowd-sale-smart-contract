@@ -1,4 +1,4 @@
-# ERC-20-token-with-crowd-sale-ICO-smart-contract
+# ERC-20-token-with-crowd-sale-smart-contract
 Created an ERC-20 token and crowd sale smart contract from scratch with frontend in React.js
 
 - ERC-20 token with a crowd sale (ICO) website
