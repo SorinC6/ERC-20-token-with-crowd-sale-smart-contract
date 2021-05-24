@@ -1507,6 +1507,14 @@
     "semver" "^6.3.0"
     "tsutils" "^3.17.1"
 
+"@web3-js/scrypt-shim@^0.1.0":
+  "integrity" "sha512-ZtZeWCc/s0nMcdx/+rZwY1EcuRdemOK9ag21ty9UsHkFxsNb/AaoucUz0iPuyGe0Ku+PFuRmWZG7Z7462p9xPw=="
+  "resolved" "https://registry.npmjs.org/@web3-js/scrypt-shim/-/scrypt-shim-0.1.0.tgz"
+  "version" "0.1.0"
+  dependencies:
+    "scryptsy" "^2.1.0"
+    "semver" "^6.3.0"
+
 "@webassemblyjs/ast@1.8.5":
   "integrity" "sha512-aJMfngIZ65+t71C3y2nBBg5FFG0Okt9m0XEgWZ7Ywgn1oMAT8cNwx00Uv1cQyHtidq0Xn94R4TAywO+LCQ+ZAQ=="
   "resolved" "https://registry.npmjs.org/@webassemblyjs/ast/-/ast-1.8.5.tgz"
