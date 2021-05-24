@@ -22,6 +22,8 @@ class App extends Component {
     tokenPriceInWei: 0,
     tokensSold: 0,
     tokensAvailable: 800000,
+    tokensToBeBuyed: null,
+    loading: false
   };
 
   componentDidMount = async () => {
@@ -33,24 +35,34 @@ class App extends Component {
       const accounts = await web3.eth.getAccounts();
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
+      let tokenContract
+      let tokenSaleContract
+      let deployedNetwork
+      let deployedNetworkSale
 
-      const deployedNetwork = GreatToken.networks[networkId];
-      const deployedNetworkSale = GreatTokenSale.networks[networkId];
-      console.log('deployedNetworkSale', deployedNetworkSale);
-
+      deployedNetwork = GreatToken.networks[networkId];
+      deployedNetworkSale = GreatTokenSale.networks[networkId];
       // get Instance of GreatToken contract
-      const tokenContract = new web3.eth.Contract(
+      tokenContract = new web3.eth.Contract(
         GreatToken.abi,
         deployedNetwork && deployedNetwork.address,
       );
       // get Instance of GreatTokenSale contract
-      const tokenSaleContract = new web3.eth.Contract(
+      tokenSaleContract = new web3.eth.Contract(
         GreatTokenSale.abi,
         deployedNetworkSale && deployedNetworkSale.address,
       );
-      console.log('tokenSaleContract', tokenSaleContract);
 
       const account = await web3.eth.getCoinbase();
+
+      await tokenSaleContract.events.Sell({ fromBlock: 0, toBlock: 'latest' }, async (error, event) => {
+        this.setState({
+          loading: false
+        });
+        this.setTokensToBeBuyed('')
+
+        this.setState({ web3, accounts, tokenContract, tokenSaleContract, account }, this.initData);
+      })
 
       // Set web3, accounts, and contract to the state
       this.setState({ web3, accounts, tokenContract, tokenSaleContract, account }, this.initData);
@@ -61,12 +73,13 @@ class App extends Component {
     }
   };
 
+
+
   getToeknInformation = async () => {
     const { tokenSaleContract, tokenContract, account } = this.state;
     const price = await tokenSaleContract.methods.tokenPrice().call();
     const tokensSold = await tokenSaleContract.methods.tokenSold().call();
     const balance = await tokenContract.methods.balanceOf(account).call();
-    console.log('balance', balance);
 
     this.setState({
       tokenPriceInWei: price,
@@ -76,34 +89,41 @@ class App extends Component {
     });
   };
 
-  buyTokens = async (tokensNumber) => {
-    const { tokenSaleContract, account, tokenPriceInWei } = this.state;
-    // return await tokenSaleContract.methods.buyTokens(tokensNumber).send({
-    //   from: account,
-    //   value: tokensNumber * tokenPriceInWei,
-    //   gas: 50000,
-    // });
+  setTokensToBeBuyed = (value) => {
+    this.setState({ tokensToBeBuyed: value })
+  }
+
+
+  buyTokens = async (e) => {
+    e.preventDefault();
+
+    const { tokenSaleContract, account, tokenPriceInWei, tokensToBeBuyed } = this.state;
+    this.setState({ loading: true })
+    try {
+      await tokenSaleContract.methods.buyTokens(tokensToBeBuyed).send({
+        from: account,
+        value: tokensToBeBuyed * tokenPriceInWei,
+        gas: 500000,
+      });
+      this.forceUpdate()
+    } catch (error) {
+      this.setState({ loading: false })
+    }
   };
 
   initData = async () => {
     this.getToeknInformation();
-
-    // const { accounts, tokenContract, tokenSaleContract } = this.state;
-
-    // const address = await tokenContract.methods.name().call();
-    // const tokenPrice = await tokenSaleContract.methods.tokenPrice().call();
   };
 
   render() {
-    const { account, web3, tokenPriceInEth, tokensSold, tokensAvailable, balance } = this.state;
-
+    const { account, web3, tokenPriceInEth, tokensSold, tokensAvailable, balance, tokensToBeBuyed } = this.state;
     if (!web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
       <div>
         <Header tokenPrice={tokenPriceInEth} balance={balance} />
-        <FormSection buyTokens={this.buyTokens} />
+        <FormSection buyTokens={this.buyTokens} setTokensToBeBuyed={this.setTokensToBeBuyed} tokensToBeBuyed={tokensToBeBuyed} />
         <ProgressBar tokensSold={tokensSold} tokensAvailable={tokensAvailable} />
         <WarningSection />
         <Typography align="center">Your Address: {account}</Typography>

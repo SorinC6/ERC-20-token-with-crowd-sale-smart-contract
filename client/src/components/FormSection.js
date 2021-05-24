@@ -12,17 +12,9 @@ const StyledForm = styled.form`
   margin: 0 auto;
 `;
 
-const FormSection = ({ buyTokens }) => {
-  const [value, setValue] = useState();
-  const handleTokenSubmit = (e) => {
-    e.preventDefault();
-    console.log(e);
-    // more data validation TODO
-    const test = buyTokens(value);
-    console.log('TEST', test);
-  };
+const FormSection = ({ buyTokens, setTokensToBeBuyed, tokensToBeBuyed }) => {
   return (
-    <StyledForm onSubmit={handleTokenSubmit}>
+    <StyledForm onSubmit={buyTokens}>
       <TextField
         fullWidth
         id="input-with-icon-textfield"
@@ -30,8 +22,8 @@ const FormSection = ({ buyTokens }) => {
         align="center"
         type="number"
         placeholder="number of tokens"
-        onChange={(event) => setValue(event.target.value)}
-        value={value}
+        onChange={e => setTokensToBeBuyed(e.target.value)}
+        value={tokensToBeBuyed}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">

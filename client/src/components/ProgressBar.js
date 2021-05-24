@@ -52,7 +52,6 @@ const useStyles = makeStyles({
 export default function LinearWithValueLabel({ tokensSold, tokensAvailable }) {
   const classes = useStyles();
   const [progress, setProgress] = React.useState(80);
-  console.log('!!!tokenSold', tokensSold);
 
   const progressProcent = (tokensSold / tokensAvailable) * 100;
   return (
