@@ -2531,6 +2531,13 @@
     "base64-js" "^1.0.2"
     "ieee754" "^1.1.4"
 
+"bufferutil@^4.0.1":
+  "integrity" "sha512-yEYTwGndELGvfXsImMBLop58eaGW+YdONi1fNjTINSY98tmMmFijBG6WXgdkfuLNt4imzQNtIE+eBp1PVpMCSw=="
+  "resolved" "https://registry.npmjs.org/bufferutil/-/bufferutil-4.0.3.tgz"
+  "version" "4.0.3"
+  dependencies:
+    "node-gyp-build" "^4.2.0"
+
 "builtin-status-codes@^3.0.0":
   "integrity" "sha1-hZgoeOIbmOHGZCXgPQF0eI9Wnug="
   "resolved" "https://registry.npmjs.org/builtin-status-codes/-/builtin-status-codes-3.0.0.tgz"
@@ -7399,6 +7406,11 @@
   "resolved" "https://registry.npmjs.org/node-forge/-/node-forge-0.9.0.tgz"
   "version" "0.9.0"
 
+"node-gyp-build@^4.2.0":
+  "integrity" "sha512-MN6ZpzmfNCRM+3t57PTJHgHyw/h4OWnZ6mR8P5j/uZtqQr46RRuDE/P+g3n0YR/AiYXeWixZZzaip77gdICfRg=="
+  "resolved" "https://registry.npmjs.org/node-gyp-build/-/node-gyp-build-4.2.3.tgz"
+  "version" "4.2.3"
+
 "node-int64@^0.4.0":
   "integrity" "sha1-h6kGXNs1XTGC2PlM4RGIuCXGijs="
   "resolved" "https://registry.npmjs.org/node-int64/-/node-int64-0.4.0.tgz"
@@ -11227,6 +11239,13 @@
   "resolved" "https://registry.npmjs.org/use/-/use-3.1.1.tgz"
   "version" "3.1.1"
 
+"utf-8-validate@^5.0.2":
+  "integrity" "sha512-+pnxRYsS/axEpkrrEpzYfNZGXp0IjC/9RIxwM5gntY4Koi8SHmUGSfxfWqxZdRxrtaoVstuOzUp/rbs3JSPELQ=="
+  "resolved" "https://registry.npmjs.org/utf-8-validate/-/utf-8-validate-5.0.5.tgz"
+  "version" "5.0.5"
+  dependencies:
+    "node-gyp-build" "^4.2.0"
+
 "utf8@3.0.0":
   "integrity" "sha512-E8VjFIQ/TyQgp+TZfS6l8yp/xWppSAHzidGiRrqe4bK4XP9pTRyKFgGJpO3SN7zdX4DeomTrwaseCHovfpFcqQ=="
   "resolved" "https://registry.npmjs.org/utf8/-/utf8-3.0.0.tgz"
@@ -11718,6 +11737,18 @@
   "integrity" "sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg=="
   "resolved" "https://registry.npmjs.org/websocket-extensions/-/websocket-extensions-0.1.4.tgz"
   "version" "0.1.4"
+
+"websocket@^1.0.34":
+  "integrity" "sha512-PRDso2sGwF6kM75QykIesBijKSVceR6jL2G8NGYyq2XrItNC2P5/qL5XeR056GhA+Ly7JMFvJb9I312mJfmqnQ=="
+  "resolved" "https://registry.npmjs.org/websocket/-/websocket-1.0.34.tgz"
+  "version" "1.0.34"
+  dependencies:
+    "bufferutil" "^4.0.1"
+    "debug" "^2.2.0"
+    "es5-ext" "^0.10.50"
+    "typedarray-to-buffer" "^3.1.5"
+    "utf-8-validate" "^5.0.2"
+    "yaeti" "^0.0.6"
 
 "websocket@github:web3-js/WebSocket-Node#polyfill/globalThis":
   "resolved" "git+ssh://git@github.com/web3-js/WebSocket-Node.git#905deb4812572b344f5801f8c9ce8bb02799d82e"
